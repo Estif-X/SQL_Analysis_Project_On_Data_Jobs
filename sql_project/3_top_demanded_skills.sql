@@ -7,39 +7,17 @@ Question: What are the most in-demand skills for data analysts?
     providing insights into the most valuable skills for job seekers.
 */
 
-SELECT
-    sd.skills,
-    COUNT(sjd.job_id) as demand_count
-FROM
-    job_postings_fact as jpf
-INNER JOIN skills_job_dim as sjd ON jpf.job_id = sjd.job_id
-INNER JOIN skills_dim as sd ON sjd.skill_id = sd.skill_id
+SELECT 
+    skills,
+    COUNT(skills_job_dim.job_id) AS demand_count
+FROM job_postings_fact
+INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
+INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
 WHERE
-    jpf.job_title_short = 'Data Analyst'
+    job_title_short = 'Data Analyst' 
+    AND job_work_from_home = True 
 GROUP BY
-    sd.skills
-ORDER BY
-    demand_count DESC
-LIMIT 5;
-
-/*
-Question: What are the most in-demand skills for data analysts in remote jobs?
-- Similar to the first query but focuses on remote jobs
-- Why? Retrieves the top 5 skills with the highest demand in the job market for remote
-*/
-
-SELECT
-    sd.skills,
-    COUNT(sjd.job_id) as demand_count
-FROM
-    job_postings_fact as jpf
-INNER JOIN skills_job_dim as sjd ON jpf.job_id = sjd.job_id
-INNER JOIN skills_dim as sd ON sjd.skill_id = sd.skill_id
-WHERE
-    jpf.job_title_short = 'Data Analyst' AND
-    jpf.job_work_from_home = TRUE
-GROUP BY
-    sd.skills
+    skills
 ORDER BY
     demand_count DESC
 LIMIT 5;
